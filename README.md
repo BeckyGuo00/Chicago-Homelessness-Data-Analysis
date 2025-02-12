@@ -1,3 +1,7 @@
+## Description
+This project analyzes homelessness trends in Chicago over the past decade (2014-2023), focusing on the impact of affordable rental housing and income changes. Mostly use SQL to explore correlations between homelessness rates, shelter capacity, and economic factors.
+
+
 ## Dataset
 - **Homelessness Counts(2014-2023)** - Sourced from [National Alliance to End Homelessness] (https://endhomelessness.org/homelessness-in-america/homelessness-statistics/state-of-homelessness/); 
 - **Homelessness Counts(2014-2023)** - Sourced from [Security.org] (https://www.security.org/resources/homeless-statistics/)
