@@ -1,0 +1,505 @@
+-- CREATE DATABASE homeless_analyze;
+USE homeless_analyze;
+
+-- create Years table
+DROP TABLE if EXISTS Years;
+CREATE TABLE Years(
+    yearPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    year INT NOT NULL
+);
+INSERT INTO Years (year) VALUES
+(2014),
+(2019),
+(2023);
+
+SELECT * FROM Years;
+
+
+-- create whole American homelessness people table
+DROP TABLE if EXISTS US_homeless_count;
+CREATE TABLE US_homeless_count(
+    us_countPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    us_count INT NULL,
+    yearFK INT NULL
+);
+INSERT INTO US_homeless_count (us_count, yearFK) VALUES
+(576450, 1),
+(567715, 2),
+(653104, 3);
+
+SELECT * FROM US_homeless_count;
+
+
+-- create Chicago homelessness people table
+DROP TABLE if EXISTS Chicago_homeless_count;
+CREATE TABLE Chicago_homeless_count(
+    chi_countPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    chi_count INT NULL,
+    yearFK INT NULL
+);
+INSERT INTO Chicago_homeless_count (chi_count, yearFK) VALUES
+(6294, 1),
+(5290, 2),
+(6139, 3);
+
+SELECT * FROM Chicago_homeless_count;
+
+
+-- QUERY: us homelessness_Chicago homelessness ratio
+SELECT 
+u.us_count, 
+c.chi_count, 
+CONCAT(ROUND((c.chi_count/u.us_count)*100, 2), '%') AS us_Chicago_homelessness_ratio
+FROM US_homeless_count AS u
+JOIN Chicago_homeless_count AS c ON u.yearFK = c.yearFK;
+
+
+-- create Chicago population table
+DROP TABLE if EXISTS Chicago_population;
+CREATE TABLE Chicago_population(
+    chi_populationPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    chi_population INT NULL,
+    yearFK INT NULL
+);
+INSERT INTO Chicago_population (chi_population, yearFK) VALUES
+(2726800, 1),
+(2691497, 2),
+(2664452, 3);
+
+SELECT * FROM Chicago_population;
+
+
+-- QUERY:Chicago population_Chicago homelessness_ratio
+SELECT 
+c.chi_count, 
+cp.chi_population, 
+CONCAT(ROUND((c.chi_count/cp.chi_population)*100, 3), '%') AS Chicago_population_homelessness_ratio
+FROM Chicago_population AS cp
+JOIN Chicago_homeless_count AS c ON cp.yearFK = c.yearFK;
+
+
+-- create gender categories table
+DROP TABLE if EXISTS Gender_categories;
+CREATE TABLE Gender_categories(
+    gender_namePK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    gender_name VARCHAR(255) NULL
+);
+INSERT INTO Gender_categories (gender_name) VALUES
+('Female'),
+('Male');
+
+SELECT * FROM Gender_categories;
+
+
+-- create gender table
+DROP TABLE if EXISTS Gender;
+CREATE TABLE Gender(
+    genderPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    gender_count INT NULL,
+    gender_nameFK INT NULL,
+    yearFK INT NULL
+);
+INSERT INTO Gender (gender_count, gender_nameFK,yearFK) VALUES
+(2406, 1, 1),
+(2044, 1, 2),
+(1906, 1, 3),
+(4361, 2, 1),
+(3216, 2, 2),
+(4187, 2, 3);
+
+SELECT * FROM Gender;
+
+
+-- create race and ethnicity categories table
+DROP TABLE if EXISTS Race_ethnicity_categories;
+CREATE TABLE Race_ethnicity_categories(
+    race_ethnicity_namePK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    race_ethnicity_name VARCHAR(255) NULL
+);
+INSERT INTO Race_ethnicity_categories (race_ethnicity_name) VALUES
+('American Indian/Alaska Native'),
+('Asian/Pacific Islander'),
+('Black/African American'),
+('Multiple Races'),
+('White'),
+('Hispanic');
+
+SELECT * FROM Race_ethnicity_categories;
+
+
+-- create race and ethnicity table
+DROP TABLE if EXISTS Race_ethnicity;
+CREATE TABLE Race_ethnicity(
+    race_ethnicityPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    race_ethnicity_count INT NULL,
+    race_ethnicity_nameFK INT NULL,
+    yearFK INT NULL
+);
+INSERT INTO Race_ethnicity (race_ethnicity_count, race_ethnicity_nameFK, yearFK) VALUES
+(15, 1, 1),
+(48, 1, 2),
+(62, 1, 3),
+(61, 2, 1),
+(59, 2, 2),
+(137, 2, 3),
+(5180, 3, 1),
+(4117, 3, 2),
+(2984, 3, 3),
+(193, 4, 1),
+(40, 4, 2),
+(163, 4, 3),
+(1337, 5, 1),
+(1026, 5, 2),
+(2793, 5, 3),
+(1799, 6, 1),
+(1032, 6, 2),
+(3584, 6, 3);
+
+SELECT * FROM Race_ethnicity;
+
+
+-- create homeless demographics table
+DROP TABLE if EXISTS Homeless_Demographics;
+CREATE TABLE Homeless_Demographics(
+    homeless_demographicsPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+    gender_race_count INT NULL,
+    gender_nameFK INT NULL,
+    race_ethnicity_nameFK INT NULL,
+    yearFK INT NULL  
+);
+INSERT INTO Homeless_Demographics (gender_race_count, gender_nameFK, race_ethnicity_nameFK, yearFK) VALUES
+(15, 1, 1, 1),
+(41, 2, 1, 1),
+(23, 1, 2, 1), 
+(19, 2, 2, 1), 
+(1080, 1, 3, 1),
+(917, 2, 3, 1),
+(193, 1, 4, 1),
+(40, 2, 4, 1),
+(677, 1, 5, 1),
+(526, 2, 5, 1),
+(709, 1, 6, 1),
+(432, 2, 6, 1),
+(28, 1, 1, 2),
+(32, 2, 1, 2),
+(21, 1, 2, 2),
+(77, 2, 2, 2),
+(607, 1, 3, 2),
+(594, 2, 3, 2),
+(40, 1, 4, 2),
+(73, 2, 4, 2),
+(586, 1, 5, 2),
+(243, 2, 5, 2),
+(179, 1, 6, 2),
+(354, 2, 6, 2),
+(62, 1, 1, 3),
+(78, 2, 1, 3),
+(67, 1, 2, 3),
+(39, 2, 2, 3),
+(515, 1, 3, 3),
+(27, 2, 3, 3),
+(53, 1, 4, 3),
+(20, 2, 4, 3),
+(673, 1, 5, 3),
+(246, 2, 5, 3),
+(374, 1, 6, 3),
+(189, 2, 6, 3);
+
+SELECT * FROM Homeless_Demographics;
+
+
+-- QUERY: distribution of homelessness by gender and ethnicity 
+SELECT
+g.gender_count AS total_homeless_by_gender,
+gc.gender_name,
+hd.gender_race_count AS total_homeless_by_gender_race,
+rec.race_ethnicity_name,
+y.year
+FROM Gender AS g
+JOIN Gender_categories AS gc ON gc.gender_namePK = g.gender_nameFK
+JOIN Homeless_Demographics AS hd ON hd.gender_nameFK = gc.gender_namePK
+JOIN Race_ethnicity_categories AS rec ON rec.race_ethnicity_namePK = hd.race_ethnicity_nameFK
+JOIN Years AS y ON y.yearPK = g.yearFK
+WHERE g.yearFK = hd.yearFK
+AND g.gender_nameFK = hd.gender_nameFK
+AND gc.gender_namePK = hd.gender_nameFK
+AND rec.race_ethnicity_namePK = hd.race_ethnicity_nameFK;
+
+
+-- create minium wage in chicago table
+DROP TABLE if EXISTS Chicago_minium_wage;
+CREATE TABLE Chicago_minium_wage(
+    min_wagePK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    min_wage FLOAT NULL,
+    yearFK INT NULL
+);
+INSERT INTO Chicago_minium_wage (min_wage, yearFK) VALUES
+(8.25, 1),
+(8.25, 2),
+(13.0, 3);
+
+SELECT * FROM Chicago_minium_wage;
+
+
+-- create employment status table
+DROP TABLE if EXISTS Employment_Status;
+CREATE TABLE Employment_Status(
+    emp_statusPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    emp_status VARCHAR(255) NULL
+);
+INSERT INTO Employment_Status (emp_status) VALUES
+('Employed Full-Time'),
+('Employed Part-Time'),
+('Unemployed'),
+('Unable to Work');
+
+SELECT * FROM Employment_Status;
+
+
+-- create employment count table
+DROP TABLE if EXISTS Employment_Count;
+CREATE TABLE Employment_Count(
+    emp_countPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    emp_count INT NULL,
+    emp_statusFK INT NULL,
+    yearFK INT NULL  
+);
+INSERT INTO Employment_Count (emp_count, emp_statusFK, yearFK) VALUES
+(596450, 1, 1),
+(454700, 1, 2),
+(430476, 1, 3),
+(153790, 2, 1),
+(130064, 2, 2),
+(123479, 2, 3),
+(107853, 3, 1),
+(120490, 3, 2),
+(150560, 3, 3),
+(55637, 4, 1),
+(79374, 4, 2),
+(89748, 4, 3);
+
+SELECT * FROM Employment_Count;
+
+
+-- create area median income table
+DROP TABLE if EXISTS Area_median_income;
+CREATE TABLE Area_median_income(
+    amiPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    ami VARCHAR(255) NULL
+);
+INSERT INTO Area_median_income (ami) VALUES
+('Less than 30%'),
+('Between 30% to 50%'),
+('Between 50% to 80%'),
+('Between 80% to 120%'),
+('Between 120% to 200%'),
+('More than 200%');
+
+SELECT * FROM Area_median_income;
+
+
+-- create annual composition of renter households by income table
+DROP TABLE if EXISTS Income_rent_ratio;
+CREATE TABLE Income_rent_ratio(
+    irtPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    irt VARCHAR(255) NULL
+);
+INSERT INTO Income_rent_ratio (irt) VALUES
+('Not Rent Burdened'),
+('30% to 50% Income Spent on Rent'),
+('More than 50% Income Spent on Rent');
+
+SELECT * FROM Income_rent_ratio;
+
+
+-- create Rent_Burden table
+DROP TABLE if EXISTS Rent_Burden;
+CREATE TABLE Rent_Burden(
+    rent_burdenPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    rent_burden_count INT NULL,
+    yearFK INT NULL,
+    amiFK INT NULL,
+    irtFK INT NULL
+);
+INSERT INTO Rent_Burden (rent_burden_count, yearFK, amiFK, irtFK) VALUES
+(21597, 1, 1, 1),
+(23058, 1, 1, 2),
+(142254, 1, 1, 3),
+(15789, 1, 2, 1),
+(43664, 1, 2, 2),
+(26592, 1, 2, 3),
+(57161, 1, 3, 1),
+(42752, 1, 3, 2),
+(6887, 1, 3, 3),
+(63638, 1, 4, 1),
+(12093, 1, 4, 2),
+(1255, 1, 4, 3),
+(68366, 1, 5, 1),
+(6076, 1, 5, 2),
+(67, 1, 5, 3),
+(35408, 1, 6, 1),
+(23572, 2, 1, 1),
+(25768, 2, 1, 2),
+(129389, 2, 1, 3),
+(18279, 2, 2, 1),
+(38677, 2, 2, 2),
+(25760, 2, 2, 3),
+(57249, 2, 3, 1),
+(38407, 2, 3, 2),
+(7305, 2, 3, 3),
+(66713, 2, 4, 1),
+(12908, 2, 4, 2),
+(548, 2, 4, 3),
+(72036, 2, 5, 1),
+(2580, 2, 5, 2),
+(44749, 2, 6, 1),
+(20821, 3, 1, 1),
+(24847, 3, 1, 2),
+(137076, 3, 1, 3),
+(15206, 3, 2, 1),
+(40422, 3, 2, 2),
+(31551, 3, 2, 3),
+(53691, 3, 3, 1),
+(42158, 3, 3, 2),
+(8490, 3, 3, 3),
+(77960, 3, 4, 1),
+(18161, 3, 4, 2),
+(1096, 3, 4, 3),
+(77738, 3, 5, 1),
+(3564, 3, 5, 2),
+(267, 3, 5, 3),
+(49468, 3, 6, 1),
+(170, 3, 6, 2);
+
+SELECT * FROM Rent_Burden;
+
+
+-- QUERY: compare with homeless count and the income ranges
+SELECT 
+rb.rent_burden_count,
+a.ami,
+i.irt,
+y.year
+FROM Rent_Burden AS rb
+JOIN Income_rent_ratio AS i ON i.irtPK = rb.irtFk
+JOIN Area_median_income AS a ON a.amiPK = rb.amiFK
+JOIN Years AS y ON y.yearPK = rb.yearFK
+ORDER BY irtFK, amiFK, rent_burden_count, yearFK DESC;
+
+
+-- create renter occupied table,
+DROP TABLE if EXISTS Renter_Occupied;
+CREATE TABLE Renter_Occupied(
+    renter_occipiedPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    renter_occipied INT NULL,
+    rental_rate FLOAT NULL,
+    yearFK INT NULL
+);
+INSERT INTO Renter_Occupied (renter_occipied, rental_rate, yearFK) VALUES
+(566657, 0.563, 1),
+(563940, 0.553, 2),
+(602686, 0.542, 3);
+
+SELECT * FROM Renter_Occupied;
+
+
+-- create owner occupied table,
+DROP TABLE if EXISTS Owner_Occupied;
+CREATE TABLE Owner_Occupied(
+    owner_occipiedPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    owner_occipied INT NULL,
+    owner_rate FLOAT NULL,
+    yearFK INT NULL
+);
+INSERT INTO Owner_Occupied (owner_occipied, owner_rate, yearFK) VALUES
+(433545, 0.431, 1),
+(450553, 0.442, 2),
+(503142, 0.452, 3);
+
+SELECT * FROM Owner_Occupied;
+
+
+-- QUERY:create homeless_ratio query,
+SELECT 
+r.renter_occipied, 
+CONCAT(ROUND(r.rental_rate*100, 3), '%') AS owner_rate,
+o.owner_occipied, 
+CONCAT(ROUND(o.owner_rate*100, 3), '%') AS owner_rate,
+chc.chi_count,
+CONCAT(ROUND((chc.chi_count/(r.renter_occipied/r.rental_rate))*100, 2), '%') AS homeless_ratio,
+r.yearFK
+FROM Renter_Occupied AS r
+JOIN Owner_Occupied AS o ON o.yearFK = r.yearFK
+JOIN Chicago_homeless_count AS chc ON chc.yearFK = r.yearFK;
+
+
+-- create rental affordability table,
+DROP TABLE if EXISTS Rental_Affordability;
+CREATE TABLE Rental_Affordability(
+    rental_affordabilityPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    affordable_supply INT NULL,
+    affordable_demand INT NULL,
+    affordable_gap INT NULL,
+    yearFK INT NULL
+);
+INSERT INTO Rental_Affordability (affordable_supply, affordable_demand, affordable_gap, yearFK) VALUES
+(255372, 366011, 110639, 1),
+(217188, 333447, 116259, 2),
+(216897, 336332, 119435, 3);
+
+SELECT * FROM Rental_Affordability;
+-- INSERT INTO Rent_Burden (yearFK, amiFK, income_rent_ratioFK, rental_affordabilityFK, homeless_demographicsFK) VALUES
+
+
+-- create renter age group table,
+DROP TABLE if EXISTS Renter_Age;
+CREATE TABLE Renter_Age(
+    renter_agePK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    renter_age_group VARCHAR(255) NULL
+);
+INSERT INTO Renter_Age (renter_age_group) VALUES
+('15-24'),
+('25-34'),
+('35-44'),
+('45-54'),
+('55-64'),
+('65-74'),
+('75+');
+
+SELECT * FROM Renter_Age;
+
+
+-- create renters by age group table,
+DROP TABLE if EXISTS Renters_by_Age;
+CREATE TABLE Renters_by_Age(
+    rentersPK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    renters INT NULL,
+    renter_ageFK INT NULL,
+    yearFK INT NULL
+);
+INSERT INTO Renters_by_Age (renters, renter_ageFK, yearFK) VALUES
+(45230, 1, 1),
+(182552, 2, 1),
+(113299, 3, 1),
+(90562, 4, 1),
+(66261, 5, 1),
+(38323, 6, 1),
+(30430, 7, 1),
+(37654, 1, 2),
+(37654, 2, 2),
+(109146, 3, 2),
+(78047, 4, 2),
+(75855, 5, 2),
+(50593, 6, 2),
+(32996, 7, 2),
+(46773, 1, 3),
+(195089, 2, 3),
+(120445, 3, 3),
+(75041, 4, 3),
+(75317, 5, 3),
+(53088, 6, 3),
+(36932, 7, 3);
+
+SELECT * FROM Renters_by_Age;
+
+
